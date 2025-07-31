@@ -4,13 +4,20 @@
 set -euo pipefail
 IFS=$'\n\t'
 INFO="INFO: [$(basename "$0")] "
+WARNING="WARNING: [$(basename "$0")] "
+ERROR="ERROR: [$(basename "$0")] "
 
 echo "$INFO" "  User    :$(id "$(whoami)")"
 echo "$INFO" "  Workdir :$(pwd)"
 
 # Trust all notebooks in the notebooks folder
 echo "$INFO" "trust all notebooks in path..."
-find "${NOTEBOOK_BASE_DIR}" -name '*.ipynb' -type f | xargs -I % /bin/bash -c 'jupyter trust "%" || true' || true
+# Try to trust all notebooks, warn if any fail, info if all succeeded
+if find "${NOTEBOOK_BASE_DIR}" -name '*.ipynb' -type f -exec jupyter trust {} +; then
+    echo "$INFO" "All notebooks trusted successfully."
+else
+    echo "$WARNING" "Some notebooks could not be trusted. TIP: please review the notebooks in ${NOTEBOOK_BASE_DIR}."
+fi
 
 # Configure
 # Prevents notebook to open in separate tab
@@ -27,6 +34,12 @@ cat > .jupyter_config.json <<EOF
     "FileCheckpoints": {
         "checkpoint_dir": "/home/jovyan/._ipynb_checkpoints/"
     },
+    "FileContentsManager": {
+        "preferred_dir": "${NOTEBOOK_BASE_DIR}/workspace/"
+    },
+    "IdentityProvider": {
+        "token": "${NOTEBOOK_TOKEN}"
+    },
     "Session": {
         "debug": false
     },
@@ -42,17 +55,21 @@ cat > .jupyter_config.json <<EOF
         "open_browser": false,
         "port": 8888,
         "quit_button": false,
-        "root_dir": "${NOTEBOOK_BASE_DIR}",
         "webbrowser_open_new": 0
-    },
-    "IdentityProvider": {
-        "token": "${NOTEBOOK_TOKEN}"
-    },
-    "FileContentsManager": {
-        "preferred_dir": "${NOTEBOOK_BASE_DIR}/workspace/",
-        "delete_to_trash": false
     }
 }
+EOF
+
+# SEE https://jupyter-server.readthedocs.io/en/latest/other/full-config.html
+cat > "$HOME/.jupyter/jupyter_notebook_config.py" <<EOF
+c.JupyterHub.tornado_settings = {
+    'cookie_options': {'SameSite': 'None', 'Secure': True}
+}
+
+c.NotebookApp.tornado_settings = {
+    'cookie_options': {'SameSite': 'None', 'Secure': True}
+}
+c.NotebookApp.disable_check_xsrf = True
 EOF
 
 cat > "/opt/conda/share/jupyter/lab/overrides.json" <<EOF
@@ -66,17 +83,16 @@ EOF
 
 VOILA_NOTEBOOK="${NOTEBOOK_BASE_DIR}"/workspace/voila.ipynb
 
-
-
-
-if [ "${DY_BOOT_OPTION_BOOT_MODE}" -ne 0 ]; then
-    echo "$INFO" "Found DY_BOOT_OPTION_BOOT_MODE=${DY_BOOT_OPTION_BOOT_MODE}... Trying to start in voila mode"
-fi
-
-if [ "${DY_BOOT_OPTION_BOOT_MODE}" -eq 1 ] && [ -f "${VOILA_NOTEBOOK}" ]; then
-    echo "$INFO" "Found ${VOILA_NOTEBOOK}... Starting in voila mode"
-    voila "${VOILA_NOTEBOOK}" --enable_nbextensions=True --port 8888 --Voila.ip="0.0.0.0" --no-browser
+if [ "${DY_BOOT_OPTION_BOOT_MODE}" -eq 1 ]; then
+    if [ -f "${VOILA_NOTEBOOK}" ]; then
+        echo "$INFO" "Found ${VOILA_NOTEBOOK}... Starting in voila mode"
+        voila "${VOILA_NOTEBOOK}" --port 8888 --Voila.ip="0.0.0.0" --no-browser
+    else
+        echo "$ERROR" "VOILA_NOTEBOOK (${VOILA_NOTEBOOK}) not found! Cannot start in voila mode."
+        exit 1
+    fi
 else
     # call the notebook with the basic parameters
-    start-notebook.py --config .jupyter_config.json "$@" --LabApp.default_url='/lab/tree/workspace/README.ipynb' 
+    start-notebook.sh --config .jupyter_config.json "$@" --LabApp.default_url='/lab/tree/workspace/README.ipynb' --LabApp.collaborative=True
 fi
+

@@ -2,7 +2,9 @@
 
 # quay.io/jupyter/minimal-notebook:python-3.11 is one possible base image, you can find information about others here: https://jupyter-docker-stacks.readthedocs.io/en/latest/using/selecting.html
 # Check the Jupyter/docker-stacks repo for more information about other versions of Python/OS: https://github.com/jupyter/docker-stacks
-FROM quay.io/jupyter/minimal-notebook:python-3.11 as base
+# this is Ubuntu 24.04.2 LTS (noble)
+ARG JUPYTER_MINIMAL_VERSION=lab-4.4.5@sha256:ea1adac6ee075cdadcbba6020ed5e67198814dae04d26d5d8e87417caf9f3a3d
+FROM quay.io/jupyter/minimal-notebook:${JUPYTER_MINIMAL_VERSION}
 
 
 
