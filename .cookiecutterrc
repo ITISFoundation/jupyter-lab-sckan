@@ -1,0 +1,40 @@
+# This file exists so you can easily regenerate your project.
+#
+# `cookiepatcher` is a convenient shim around `cookiecutter`
+# for regenerating projects (it will generate a .cookiecutterrc
+# automatically for any template). To use it:
+#
+#    pip install cookiepatcher
+#    cookiepatcher gh:itisfoundation/cookiecutter-osparc-service project-path
+#
+# See:
+#    https://pypi.python.org/pypi/cookiepatcher
+#
+# Alternatively, you can run:
+#
+#    cookiecutter --overwrite-if-exists --config-file=project-path/.cookiecutterrc gh:itisfoundation/cookiecutter-osparc-service
+#
+
+default_context:
+
+    _checkout:                 None
+    _output_dir:               '/home/ordonez/osparc-services/cookiecutter-osparc-jupyterlab-service'
+    _repo_dir:                 '/home/ordonez/.cookiecutters/cookiecutter-osparc-jupyterlab-service'
+    _template:                 'gh:ITISFoundation/cookiecutter-osparc-jupyterlab-service'
+    author_affiliation:        'ITIS Foundation'
+    author_email:              'ordonez@zmt.swiss'
+    author_name:               'Javier Garcia Ordonez'
+    contact_email:             'ordonez@zmt.swiss'
+    docker_base:               'quay.io/jupyter/minimal-notebook:python-3.11'
+    git_repo:                  'github'
+    git_username:              'JavierGOrdonnez'
+    number_of_inputs:          '4'
+    number_of_outputs:         '4'
+    project_name:              'JupyterLab SCKAN'
+    project_package_name:      'jupyterlab_sckan'
+    project_short_description: 'This service offers a convenient way to access SCKAN (SPARC Connectivity Knowledge Base) connectivity maps of the autonomous nervous system.'
+    project_slug:              'jupyterlab-sckan'
+    release_date:              '2025'
+    resources_CPU_nanoCPUs:    '4000000000'
+    resources_RAM_nanoBytes:   '8000000000'
+    version:                   '0.1.0'

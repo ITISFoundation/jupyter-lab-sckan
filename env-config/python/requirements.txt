@@ -1,0 +1,6 @@
+#
+# This file keeps track of all the python packages and versions that will be installed in your Service.
+# We recommend to use generate this file automatically, with tools like https://github.com/jazzband/pip-tools/
+# The following list is just an example
+matplotlib==3.7.1 
+voila==0.4.0 # https://github.com/voila-dashboards/voila.
