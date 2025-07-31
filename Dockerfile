@@ -27,12 +27,19 @@ ENV HOME="/home/$NB_USER"
 # If yes, uncomment the following and adapt
 # If not, remove the following (or leave commented)
 
-# RUN apt-get update && \
-#   apt-get install -y --no-install-recommends \
-#   bc \
-#   zip \
-#   && \
-#   apt-get clean && rm -rf /var/lib/apt/lists/* 
+RUN apt-get update && \
+  apt-get install -y --no-install-recommends \
+  bc \
+  zip \
+  gcc \
+  g++ \
+  make \
+  python3-dev \
+  libffi-dev \
+  libssl-dev \
+  gosu \
+  && \
+  apt-get clean && rm -rf /var/lib/apt/lists/*
 
 
 ENV REQ_FILE="requirements.txt"
@@ -46,8 +53,7 @@ RUN pip install -r ${NOTEBOOK_BASE_DIR}/${REQ_FILE}
 ## ----------------------------------------------------------------------
 
 
-
-
+RUN git clone https://github.com/SciCrunch/NIF-Ontology ${NOTEBOOK_BASE_DIR}/NIF-Ontology
 
 
 
@@ -55,17 +61,9 @@ RUN pip install -r ${NOTEBOOK_BASE_DIR}/${REQ_FILE}
 
 USER root
 
-RUN apt-get update && \
-   apt-get install -y --no-install-recommends \
-   gosu \
-   && \
-   apt-get clean && rm -rf /var/lib/apt/lists/* 
-
-# Run a script from the base image to fix files permission
-#RUN fix-permissions /home/$NB_USER
-
 # copy README and CHANGELOG
-COPY --chown=$NB_UID:$NB_GID README.ipynb ${NOTEBOOK_BASE_DIR}/README.ipynb
+COPY --chown=$NB_UID:$NB_GID README-OSPARC.ipynb ${NOTEBOOK_BASE_DIR}/README-OSPARC.ipynb
+COPY --chown=$NB_UID:$NB_GID README-SCKAN.ipynb ${NOTEBOOK_BASE_DIR}/README-SCKAN.ipynb
 COPY --chown=$NB_UID:$NB_GID CHANGELOG.md ${NOTEBOOK_BASE_DIR}/CHANGELOG.md
 
 # remove write permissions from files which are not supposed to be edited

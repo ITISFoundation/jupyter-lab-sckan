@@ -93,6 +93,7 @@ if [ "${DY_BOOT_OPTION_BOOT_MODE}" -eq 1 ]; then
     fi
 else
     # call the notebook with the basic parameters
-    start-notebook.sh --config .jupyter_config.json "$@" --LabApp.default_url='/lab/tree/workspace/README.ipynb' --LabApp.collaborative=True
+    start-notebook.sh --config .jupyter_config.json "$@" --LabApp.default_url='/lab/tree/workspace/README-SCKAN.ipynb' --LabApp.collaborative=True
+    start-notebook.sh --config .jupyter_config.json "$@" --LabApp.default_url='/lab/tree/workspace/README-OSPARC.ipynb' --LabApp.collaborative=True
 fi
 

@@ -11,3 +11,8 @@ jupyterlab-git==0.51.2
 jupyterlab-latex==4.3.0
 jupyterlab-lsp==5.2.0
 python-lsp-server==1.13.0
+
+## SCKAN-specific requirements
+rdflib==7.1.4
+pyontutils==0.1.38
+neurondm==0.1.8
